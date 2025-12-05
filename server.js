@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require("mysql2");
 const bcrypt = require('bcryptjs');
-const fs = require('fs');
+
 
 const app = express();
 
@@ -17,9 +17,9 @@ const db = mysql.createConnection({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   port:  Number(process.env.DB_PORT),
-  ssl: {
-    ca:fs.readFileSync("ca.pem")
-  }
+  ssl: 
+    process.env.CA_CERT ? { ca: process.env.CA_CERT } : undefined
+  
 });
 
 db.connect((err) => {
