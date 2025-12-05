@@ -5,7 +5,7 @@ const mysql = require("mysql2");
 const bcrypt = require('bcryptjs');
 
 
-const app = express();
+const app = express();p
 
 app.use(cors());
 app.use(express.json());
@@ -41,7 +41,10 @@ app.get('/', (req, res) => {
 app.post('/signup', async (req, res) => {
   const { fullName, email, password } = req.body;
 
+  console.log("SIGNUP REQUEST RECEIVED:", req.body); 
+
   if (!fullName || !email || !password) {
+    console.log("Missing fields");  
     return res.json({ success: false, message: "All fields required" });
   }
   
@@ -50,6 +53,7 @@ app.post('/signup', async (req, res) => {
   const sql = "INSERT INTO users (fullName, email, password) VALUES (?, ?, ?)";
 
   db.query(sql, [fullName, email, hashedPassword], (err, result) => {
+    console.log("SIGNUP QUERY RESULT:", err, result); 
     if (err) {
       if (err.code === "ER_DUP_ENTRY") {
         return res.json({ success: false, message: "Email already exists" });
