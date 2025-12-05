@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mysql = require("mysql2");
@@ -15,9 +16,9 @@ const db = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  port: 22408,
+  port:  Number(process.env.DB_PORT),
   ssl: {
-    ca:fs.readFileSync('./ca.pem')
+    ca:fs.readFileSync("ca.pem")
   }
 });
 
@@ -63,7 +64,7 @@ app.post('/signup', async (req, res) => {
 
 
 
-app.post("/login", (req, res) => {
+app.post("/login", async(req, res) => {
   const { email, password } = req.body;
 
   const sql = "SELECT * FROM users WHERE email = ?";
@@ -76,9 +77,10 @@ app.post("/login", (req, res) => {
     }
 
     const user = rows[0];
+
      const isMatch = await bcrypt.compare(password, user.password);
 
-    if (user.password !== password) {
+    if (!isMatch) {
       return res.json({ success: false, message: "Wrong email or password" });
     }
 
